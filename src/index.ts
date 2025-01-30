@@ -2,7 +2,9 @@ import express, { Request, Response } from "express";
 import { ApiService } from "./api/api_service";
 import { Config } from "./config";
 import { Signale } from "signale";
+import NodeCache from "node-cache";
 
+const cache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
 const app = express();
 const config = Config.getInstance();
 const logger = new Signale();
@@ -44,8 +46,15 @@ const flightOffersHandler = async (req: any, res: any) => {
     return res.status(400).json({ error: "Params or token missed" });
   }
 
+  const cacheKey = JSON.stringify({ params, token });
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) {
+    return res.json(cachedData);
+  }
+  
   try {
     const flightOffers = await ApiService.getFlightInformation(params, token);
+    cache.set(cacheKey, flightOffers);
     res.json(flightOffers);
   } catch (error) {
     res.status(500).json({ error: error });
