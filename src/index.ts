@@ -38,7 +38,7 @@ const loginHandler = async (req: Request, res: Response) => {
  * @returns {Promise<FlightOfferResponse>} - A promise that resolves to the flight offer response data.
  * @throws {Error} - Throws an error if the request to fetch flight offers fails.
  */
-const flightOffersHandler = async (req: Request, res: Response) => {
+const flightOffersHandler = async (req: any, res: any) => {
   const { params } = req.body;
   const token = req.headers.authorization;
 
